@@ -7,6 +7,24 @@ import { PlanView } from './views/PlanView';
 
 type Tab = 'matches' | 'plan' | 'profile';
 
+type SaveFile = (file: { filename: string; data: string }) => Promise<unknown>;
+
+/**
+ * Resolves a host-mediated file save if the page is running somewhere that
+ * provides one, and null everywhere else. Deliberately tolerant: any failure
+ * here just means falling back to a normal download link.
+ */
+async function mediatedSave(): Promise<SaveFile | null> {
+  const host = (globalThis as { claude?: { use?: (name: string) => Promise<unknown> } }).claude;
+  if (typeof host?.use !== 'function') return null;
+  try {
+    const ns = (await host.use('downloads')) as { save?: SaveFile } | null;
+    return typeof ns?.save === 'function' ? ns.save.bind(ns) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function App() {
   const { state, byId, actions } = useAppState();
   const [tab, setTab] = useState<Tab>('matches');
@@ -26,12 +44,23 @@ export default function App() {
     open(actions.addChurch(name.trim()));
   }
 
-  function exportState() {
-    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+  async function exportState() {
+    const data = JSON.stringify(state, null, 2);
+    const filename = `church-finder-${new Date().toISOString().slice(0, 10)}.json`;
+
+    // Some hosts sandbox the page and make a plain download link inert, offering
+    // a mediated save instead. Use it when it is there; fall back to the anchor
+    // everywhere else, which is what the dev server and a static build need.
+    const save = await mediatedSave();
+    if (save) {
+      await save({ filename, data });
+      return;
+    }
+
+    const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
     const a = document.createElement('a');
     a.href = url;
-    a.download = `church-finder-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -81,7 +110,7 @@ export default function App() {
           <button className="button button--small" onClick={addChurch}>
             Add church
           </button>
-          <button className="link" onClick={exportState}>
+          <button className="link" onClick={() => void exportState()}>
             Export
           </button>
           <button className="link" onClick={() => fileRef.current?.click()}>

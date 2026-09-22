@@ -16,6 +16,12 @@
   color-scheme: dark;
 }
 
+/*
+ * Dark is the committed default above, so the light palette has to be applied
+ * in two places: when the system asks for it and nothing has overridden that,
+ * and when a host stamps an explicit light choice on the root. Without the
+ * second block, `data-theme="light"` on a dark-preferring system renders dark.
+ */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
     --bg: #faf8f4;
@@ -32,6 +38,22 @@
     --warn: #96701f;
     color-scheme: light;
   }
+}
+
+:root[data-theme='light'] {
+  --bg: #faf8f4;
+  --surface: #ffffff;
+  --surface-2: #f3efe8;
+  --line: #e2dcd1;
+  --text: #201d18;
+  --text-dim: #5f594e;
+  --text-faint: #8b8478;
+  --accent: #8a6f1c;
+  --accent-dim: #b59a3f;
+  --good: #3f7a45;
+  --bad: #a6452c;
+  --warn: #96701f;
+  color-scheme: light;
 }
 
 * {
