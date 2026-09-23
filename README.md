@@ -45,10 +45,27 @@ Updates never interrupt you: a new build installs in the background and offers a
 ### Deploying your own copy
 
 `.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to
-`main` (and to the working branch), turning Pages on via the API if it is not already
-enabled. The build takes the subpath Pages serves from, so the manifest, the icons and
-the service worker scope all resolve under `/<repo>/` rather than the domain root —
-which is the usual reason a project-site PWA silently refuses to install.
+`main` (and to the working branch). The build takes the subpath Pages serves from, so
+the manifest, the icons and the service worker scope all resolve under `/<repo>/`
+rather than the domain root — which is the usual reason a project-site PWA silently
+refuses to install.
+
+**Set the Pages source to GitHub Actions** — Settings → Pages → Build and deployment →
+Source. `actions/configure-pages` in the workflow only turns Pages *on* when it is off;
+it will not move a repository that is already set to "deploy from a branch".
+
+That distinction bites. While a branch source is set, GitHub runs its own
+`pages-build-deployment` on every push *as well*, publishing the repository root. The
+root holds the unbuilt Vite `index.html`, whose `/src/main.tsx` does not exist on a
+static host — so that build serves a page that loads, finds no script, and renders
+blank. Both publishers write to the same site and take about the same time, so which
+one won was chance.
+
+The deploy job therefore waits for any in-flight `pages-build-deployment` on the same
+commit before publishing, which makes this build deterministically last. It is a
+workaround, not a fix: the workflow cannot disable that run (GitHub returns 422) and
+cannot change the Pages source (the settings API rejects it). Switching the source by
+hand removes the race entirely and turns the wait step into a no-op.
 
 To host it anywhere else, `npm run build` and serve `dist/` over HTTPS. The base path
 defaults to relative, so it works from any directory; set `BASE_PATH` if you need an
