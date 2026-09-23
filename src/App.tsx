@@ -5,6 +5,7 @@ import { ProfileView } from './views/ProfileView';
 import { ChurchView } from './views/ChurchView';
 import { PlanView } from './views/PlanView';
 import { MapView } from './views/MapView';
+import { useInstallPrompt, useServiceWorker } from './pwa';
 
 type Tab = 'matches' | 'map' | 'plan' | 'profile';
 
@@ -31,6 +32,8 @@ export default function App() {
   const [tab, setTab] = useState<Tab>('matches');
   const [openChurch, setOpenChurch] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const sw = useServiceWorker();
+  const { canInstall, install } = useInstallPrompt();
 
   const church = openChurch ? byId.get(openChurch) : undefined;
 
@@ -82,6 +85,28 @@ export default function App() {
 
   return (
     <div className="app">
+      {sw.needRefresh && (
+        <div className="banner" role="status">
+          <span>A new version is ready. Your notes are saved either way.</span>
+          <span className="banner__actions">
+            <button className="button button--small" onClick={sw.update}>
+              Reload
+            </button>
+            <button className="link" onClick={sw.dismiss}>
+              Later
+            </button>
+          </span>
+        </div>
+      )}
+      {sw.offlineReady && !sw.needRefresh && (
+        <div className="banner banner--quiet" role="status">
+          <span>Installed and ready to use offline.</span>
+          <button className="link" onClick={sw.dismiss}>
+            Dismiss
+          </button>
+        </div>
+      )}
+
       <nav className="nav">
         <div className="nav__brand">
           <span className="nav__mark" aria-hidden="true" />
@@ -109,6 +134,11 @@ export default function App() {
           ))}
         </div>
         <div className="nav__actions">
+          {canInstall && (
+            <button className="link" onClick={install} title="Install as an app on this device">
+              Install
+            </button>
+          )}
           <button className="button button--small" onClick={addChurch}>
             Add church
           </button>

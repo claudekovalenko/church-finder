@@ -131,7 +131,11 @@ button:focus-visible {
 .app {
   max-width: var(--max);
   margin: 0 auto;
-  padding: 0 16px 6rem;
+  /* Installed on a phone the page runs edge to edge under the notch and home
+     indicator, so the gutters carry the safe-area insets on top of the base 16px. */
+  padding-left: calc(16px + env(safe-area-inset-left, 0px));
+  padding-right: calc(16px + env(safe-area-inset-right, 0px));
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
 }
 
 .nav {
@@ -143,7 +147,7 @@ button:focus-visible {
   border-bottom: 1px solid var(--line);
   margin-bottom: 2rem;
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   background: var(--bg);
   z-index: 10;
 }
@@ -1532,4 +1536,31 @@ main {
 .pin__label--below {
   top: 6px;
   left: 8px;
+}
+
+/* ---------------------------------------------------------------- banner */
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.7rem 1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.banner--quiet {
+  border-color: var(--line);
+  color: var(--text-dim);
+}
+
+.banner__actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }

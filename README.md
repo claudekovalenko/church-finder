@@ -21,6 +21,42 @@ to another browser.
 
 ---
 
+## Installing it
+
+The app is a PWA, so it installs to a home screen or dock and runs in its own window
+with no browser chrome. Open the deployed URL and:
+
+- **iPhone / iPad** — Share → Add to Home Screen. Safari has no install prompt, so
+  this is the only route.
+- **Android / Chrome / Edge** — take the **Install** link in the top bar, or the
+  browser's own install button in the address bar.
+- **Desktop Safari** — File → Add to Dock.
+
+It works fully offline once installed, which is the point: all of the state is local
+already, so there is nothing to be disconnected *from*. The one exception is map
+imagery, which is fetched from a tile server — tiles you have already looked at are
+cached for a month, and anywhere else falls back to the drawn backdrop described
+below. So you can sit in a church car park with no signal, log a visit, and score the
+axes you just heard preached.
+
+Updates never interrupt you: a new build installs in the background and offers a
+**Reload** banner rather than refreshing under whatever you were typing.
+
+### Deploying your own copy
+
+`.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to
+`main` (and to the working branch), turning Pages on via the API if it is not already
+enabled. The build takes the subpath Pages serves from, so the manifest, the icons and
+the service worker scope all resolve under `/<repo>/` rather than the domain root —
+which is the usual reason a project-site PWA silently refuses to install.
+
+To host it anywhere else, `npm run build` and serve `dist/` over HTTPS. The base path
+defaults to relative, so it works from any directory; set `BASE_PATH` if you need an
+absolute one. Serving over plain HTTP is fine for `localhost` and nowhere else — a
+service worker needs a secure origin.
+
+---
+
 ## How it thinks
 
 Fifteen axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
@@ -169,6 +205,8 @@ src/domain/match.ts       scoring, dealbreakers, confidence, question generation
 src/domain/geo.ts         distance, commute reading, coordinate parsing
 src/data/traditions.ts    denominational archetypes
 src/data/candidates.ts    the churches under consideration
+src/pwa.ts                service worker lifecycle and the install prompt
+scripts/make-icons.mjs    regenerates the app icons from one vector definition
 ```
 
 ---

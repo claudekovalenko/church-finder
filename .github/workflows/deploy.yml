@@ -1,0 +1,69 @@
+name: Deploy
+
+# Builds the app and publishes it to GitHub Pages, which is what makes it
+# installable: a PWA needs to be served over HTTPS from a real origin, so a
+# local `dist/` folder cannot be installed no matter what the manifest says.
+on:
+  push:
+    branches:
+      - main
+      - claude/church-matching-app-wiv21x
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it half-published.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check types
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          # Turns Pages on for the repository if it is not already, so this
+          # works from a clean checkout without a manual settings visit.
+          enablement: true
+
+      - name: Build
+        # Pages serves a project site from /<repo>/, so assets, the manifest,
+        # and the service worker scope all have to be built for that subpath.
+        run: npm run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
