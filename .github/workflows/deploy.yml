@@ -43,8 +43,11 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
         with:
-          # Turns Pages on for the repository if it is not already, so this
-          # works from a clean checkout without a manual settings visit.
+          # Turns Pages on for the repository if it is not already, and switches
+          # the source to Actions. If the repository was previously set to
+          # "deploy from a branch", GitHub's own pages-build-deployment workflow
+          # may still be in flight on the same commit and can land after this
+          # one; re-run this workflow to take the site back.
           enablement: true
 
       - name: Build
