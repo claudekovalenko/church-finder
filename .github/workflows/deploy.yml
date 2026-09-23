@@ -43,11 +43,18 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
         with:
-          # Turns Pages on for the repository if it is not already, and switches
-          # the source to Actions. If the repository was previously set to
-          # "deploy from a branch", GitHub's own pages-build-deployment workflow
-          # may still be in flight on the same commit and can land after this
-          # one; re-run this workflow to take the site back.
+          # Turns Pages on if it is off. It does NOT move an already-enabled
+          # repository off the "deploy from a branch" source.
+          #
+          # While that source is set, GitHub runs its own pages-build-deployment
+          # on every push as well, publishing the repository ROOT. The root
+          # holds the unbuilt Vite index.html, which points at /src/main.tsx and
+          # 404s in production — so whichever of the two finishes last decides
+          # whether the site works, and it is a coin flip.
+          #
+          # The fix is one setting, and it has to be made by hand:
+          #   Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
+          # After that this is the only publisher and the race is gone.
           enablement: true
 
       - name: Build
