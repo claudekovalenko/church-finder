@@ -79,7 +79,24 @@ export interface Profile {
   /** Free-text summary of where you are, in your own words. */
   summary: string;
   preferences: AxisPreference[];
+  /**
+   * Where you live. Distance is not folded into the match score — how far the
+   * drive is has nothing to do with whether you can sit under the teaching —
+   * but it is shown alongside it, because a church you cannot get to midweek
+   * is a church you will never actually belong to.
+   */
+  home?: GeoPoint;
   updatedAt: string;
+}
+
+export interface GeoPoint {
+  lat: number;
+  lng: number;
+}
+
+export interface Place extends GeoPoint {
+  /** What the user typed or pasted, kept so they can see what they placed. */
+  label?: string;
 }
 
 /** Where a piece of data about a church came from, and how much to trust it. */
@@ -144,6 +161,8 @@ export interface Church {
   website?: string;
   /** Denomination, network, or association as the church itself states it. */
   affiliation?: string;
+  /** Where it meets, once you have placed it on the map. */
+  location?: Place;
   /** Archetype this church inherits unconfirmed defaults from. */
   traditionId?: string;
   stage: Stage;

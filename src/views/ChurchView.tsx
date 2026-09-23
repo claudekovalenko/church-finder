@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { AXES, CATEGORY_LABELS } from '../domain/axes';
 import { matchChurch } from '../domain/match';
+import { commuteVerdict, distanceMiles, formatDistance, isValidPoint, parseLocation } from '../domain/geo';
 import { STAGE_ORDER } from '../domain/types';
 import type { Axis, AxisDatum, Church, Profile, Provenance, Stage } from '../domain/types';
 import { AnchorLabel, AxisTrack, Meter, ProvenanceTag, Score, VerdictChip } from '../components/common';
@@ -99,6 +100,8 @@ export function ChurchView({
           />
         </label>
       </div>
+
+      <LocationField church={church} profile={profile} actions={actions} />
 
       <div className="progress">
         <Meter
@@ -329,6 +332,77 @@ function AxisEditor({
           High confidence on a value you have not confirmed. Either find the source or lower it.
         </p>
       )}
+    </div>
+  );
+}
+
+function LocationField({
+  church,
+  profile,
+  actions,
+}: {
+  church: Church;
+  profile: Profile;
+  actions: Actions;
+}) {
+  const [draft, setDraft] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const placed = isValidPoint(church.location);
+  const miles =
+    placed && isValidPoint(profile.home) ? distanceMiles(profile.home, church.location!) : null;
+
+  function apply() {
+    const point = parseLocation(draft);
+    if (!point) {
+      setError('No coordinates in that. Paste a maps link, or "lat, lng".');
+      return;
+    }
+    setError(null);
+    actions.updateChurch(church.id, { location: { ...point, label: draft.trim().slice(0, 120) } });
+    setDraft('');
+  }
+
+  return (
+    <div className="field">
+      <span className="field__label">On the map</span>
+      {placed ? (
+        <p className="locfield__current">
+          {church.location!.lat.toFixed(4)}, {church.location!.lng.toFixed(4)}
+          {miles !== null && (
+            <>
+              {' · '}
+              <strong>{formatDistance(miles)}</strong> from home —{' '}
+              {commuteVerdict(miles).label}
+            </>
+          )}
+          {' · '}
+          <button
+            className="link link--danger"
+            onClick={() => actions.updateChurch(church.id, { location: undefined })}
+          >
+            clear
+          </button>
+        </p>
+      ) : (
+        <p className="locfield__current locfield__current--empty">
+          Not placed. Paste its maps link below, or use the Map tab to click it in.
+        </p>
+      )}
+      <div className="locfield__row">
+        <input
+          value={draft}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            setError(null);
+          }}
+          onKeyDown={(e) => e.key === 'Enter' && apply()}
+          placeholder="Paste a maps link or 33.6846, -117.8265"
+        />
+        <button className="button button--small" onClick={apply} disabled={!draft.trim()}>
+          {placed ? 'Move' : 'Place'}
+        </button>
+      </div>
+      {error && <p className="place-bar__error">{error}</p>}
     </div>
   );
 }

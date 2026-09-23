@@ -91,6 +91,36 @@ product.
 
 ---
 
+## The map
+
+Churches you have placed appear on a Leaflet map, coloured by verdict, with
+distance rings at 5, 12 and 25 miles from home and a sorted distance list beneath.
+
+**Distance is deliberately not part of the match score.** How far the drive is has
+nothing to do with whether you can sit under the teaching, and folding the two
+together would muddy the one thing the score is for. But it is shown everywhere the
+score is, because it decides something the doctrine cannot: whether you can be there
+midweek. A church you only ever see on Sunday morning is a church you will not be
+known in. The distance labels say that in those terms — "an easy drive", "hard to be
+present midweek" — rather than just printing miles.
+
+**There is no geocoder**, because there is no backend and the app has to work
+offline. Two ways to place a church instead: click it on the map, or paste. Pasting
+accepts a bare `33.6846, -117.8265` pair, a Google Maps `@lat,lng` URL, a place link
+(it prefers the `!3d/!4d` pin over the map centre, which is the actual building
+rather than wherever the view happened to be), or an Apple/Google `?q=`/`ll=` link.
+So the real workflow is: look the church up in your maps app, copy the link, paste.
+
+**Tiles are an enhancement, not a requirement.** Map imagery comes from an external
+host, and some environments block it. Rather than leave a grey rectangle, the map
+counts tile failures and falls back to a drawn backdrop — a coordinate graticule
+that rescales with zoom, the distance rings, and a scale bar. Panning, zooming,
+placing, popups and distances all still work; the basemap reappears wherever tiles
+are allowed. The published preview of this app is one of the places they are not, so
+that fallback is what you see there.
+
+---
+
 ## The data
 
 Two kinds of entry:
@@ -136,6 +166,7 @@ The tests will tell you if you leave a tradition unscored on it.
 src/domain/axes.ts        the fifteen axes and what their positions mean
 src/domain/profile.ts     the default profile
 src/domain/match.ts       scoring, dealbreakers, confidence, question generation
+src/domain/geo.ts         distance, commute reading, coordinate parsing
 src/data/traditions.ts    denominational archetypes
 src/data/candidates.ts    the churches under consideration
 ```
@@ -144,7 +175,8 @@ src/data/candidates.ts    the churches under consideration
 
 ## What this cannot do
 
-The model is a filter, not a verdict. It compares stated positions; it cannot tell you
+The model is a filter, not a verdict. It compares stated positions and measures
+drives; it cannot tell you
 whether the elders are humble, whether the preaching feeds you, whether anyone would
 notice if you stopped coming, or whether you can submit to these men in the things you
 end up disagreeing about. Those are the questions that actually decide it, and they are

@@ -3,6 +3,7 @@ import { getAxis } from '../domain/axes';
 import { matchAll } from '../domain/match';
 import type { AxisBreakdown, Church, MatchResult, Profile } from '../domain/types';
 import { AnchorLabel, AxisTrack, Empty, Meter, ProvenanceTag, Score, VerdictChip } from '../components/common';
+import { DistanceBadge } from './MapView';
 
 type Filter = 'candidates' | 'traditions' | 'all';
 
@@ -81,7 +82,13 @@ export function MatchesView({
           const church = byId.get(result.churchId);
           if (!church) return null;
           return (
-            <MatchCard key={result.churchId} church={church} result={result} onOpen={onOpen} />
+            <MatchCard
+              key={result.churchId}
+              church={church}
+              result={result}
+              profile={profile}
+              onOpen={onOpen}
+            />
           );
         })}
       </ul>
@@ -92,10 +99,12 @@ export function MatchesView({
 function MatchCard({
   church,
   result,
+  profile,
   onOpen,
 }: {
   church: Church;
   result: MatchResult;
+  profile: Profile;
   onOpen: (id: string) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -111,6 +120,7 @@ function MatchCard({
             <VerdictChip verdict={result.verdict} />
             {church.kind === 'tradition' && <span className="chip chip--kind">tradition</span>}
             <span className="chip chip--stage">{church.stage.replace('-', ' ')}</span>
+            <DistanceBadge profile={profile} church={church} />
           </div>
           {church.locale && <p className="card__locale">{church.locale}</p>}
         </div>

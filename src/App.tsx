@@ -4,8 +4,9 @@ import { MatchesView } from './views/MatchesView';
 import { ProfileView } from './views/ProfileView';
 import { ChurchView } from './views/ChurchView';
 import { PlanView } from './views/PlanView';
+import { MapView } from './views/MapView';
 
-type Tab = 'matches' | 'plan' | 'profile';
+type Tab = 'matches' | 'map' | 'plan' | 'profile';
 
 type SaveFile = (file: { filename: string; data: string }) => Promise<unknown>;
 
@@ -90,6 +91,7 @@ export default function App() {
           {(
             [
               ['matches', 'Matches'],
+              ['map', 'Map'],
               ['plan', 'Plan'],
               ['profile', 'Profile'],
             ] as [Tab, string][]
@@ -141,6 +143,13 @@ export default function App() {
           />
         ) : tab === 'matches' ? (
           <MatchesView profile={state.profile} churches={state.churches} onOpen={open} />
+        ) : tab === 'map' ? (
+          <MapView
+            profile={state.profile}
+            churches={state.churches}
+            actions={actions}
+            onOpen={open}
+          />
         ) : tab === 'plan' ? (
           <PlanView
             profile={state.profile}
