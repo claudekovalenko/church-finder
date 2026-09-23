@@ -14,6 +14,9 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # Needed to see whether GitHub's own branch-source Pages build is still
+  # running for this commit — see "Wait out" in the deploy job.
+  actions: read
 
 # Let a running deploy finish rather than cancelling it half-published.
 concurrency:
@@ -75,5 +78,39 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # While the repository is on the "deploy from a branch" Pages source,
+      # GitHub starts its own pages-build-deployment on the same commit, which
+      # publishes the repository ROOT — the unbuilt Vite index.html, whose
+      # /src/main.tsx 404s in production and renders a blank page.
+      #
+      # Both publish to the same site, so whichever finishes last wins, and the
+      # two take about the same time. Rather than leave that to chance, wait for
+      # GitHub's build to finish and deploy after it.
+      #
+      # This whole step is a no-op once the source is GitHub Actions, because no
+      # such run is ever created. That remains the real fix:
+      #   Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
+      - name: Wait out GitHub's branch-source Pages build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Give the run a moment to be created before concluding there is none.
+          sleep 15
+          for _ in $(seq 1 40); do
+            running=$(gh api \
+              "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&per_page=100" \
+              --jq '[.workflow_runs[]
+                     | select(.path == "dynamic/pages/pages-build-deployment")
+                     | select(.status != "completed")] | length')
+            if [ "$running" = "0" ]; then
+              echo "No branch-source Pages build in flight; deploying."
+              exit 0
+            fi
+            echo "Waiting for $running branch-source Pages build(s) to finish..."
+            sleep 10
+          done
+          echo "::warning::Timed out waiting; deploying anyway. It may be overwritten."
+
       - id: deployment
         uses: actions/deploy-pages@v4
