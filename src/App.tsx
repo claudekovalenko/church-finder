@@ -5,9 +5,10 @@ import { ProfileView } from './views/ProfileView';
 import { ChurchView } from './views/ChurchView';
 import { PlanView } from './views/PlanView';
 import { MapView } from './views/MapView';
+import { CompareView } from './views/CompareView';
 import { useInstallPrompt, useServiceWorker } from './pwa';
 
-type Tab = 'matches' | 'map' | 'plan' | 'profile';
+type Tab = 'matches' | 'compare' | 'map' | 'plan' | 'profile';
 
 type SaveFile = (file: { filename: string; data: string }) => Promise<unknown>;
 
@@ -116,6 +117,7 @@ export default function App() {
           {(
             [
               ['matches', 'Matches'],
+              ['compare', 'Compare'],
               ['map', 'Map'],
               ['plan', 'Plan'],
               ['profile', 'Profile'],
@@ -173,6 +175,8 @@ export default function App() {
           />
         ) : tab === 'matches' ? (
           <MatchesView profile={state.profile} churches={state.churches} onOpen={open} />
+        ) : tab === 'compare' ? (
+          <CompareView profile={state.profile} churches={state.churches} onOpen={open} />
         ) : tab === 'map' ? (
           <MapView
             profile={state.profile}

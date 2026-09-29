@@ -1564,3 +1564,215 @@ main {
   gap: 1rem;
   align-items: center;
 }
+
+/* --------------------------------------------------------------- compare */
+
+.compare-pick {
+  margin-bottom: 1.5rem;
+}
+
+.compare-pick__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pick {
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.pick.is-on {
+  border-color: var(--accent);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.pick.is-on::before {
+  content: '✓ ';
+  color: var(--accent);
+}
+
+.compare-pick__opts {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.compare-summary {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.compare-summary__item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.compare-summary__none {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.compare-summary__counts {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.count--overlap,
+.pill--overlap {
+  color: var(--good);
+}
+.count--partial,
+.pill--partial {
+  color: var(--accent);
+}
+.count--rub,
+.pill--rub {
+  color: var(--bad);
+}
+.count--unknown,
+.pill--unknown {
+  color: var(--text-faint);
+}
+
+.value-row {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.value-row__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.value-row__weight {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.value-row__label {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.value-row__want {
+  display: grid;
+  gap: 0.15rem;
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+}
+
+.value-row__detail {
+  margin: 0.25rem 0 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.value-row__churches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.has {
+  border-left: 3px solid var(--line);
+  padding: 0.2rem 0 0.2rem 0.8rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.has--overlap {
+  border-left-color: var(--good);
+}
+.has--partial {
+  border-left-color: var(--accent);
+}
+.has--rub {
+  border-left-color: var(--bad);
+}
+
+.has__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.has__church {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.has__church:hover {
+  text-decoration: underline;
+}
+
+.pill {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.has__none,
+.has__note {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.value-row__ask {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-dim);
+  border-top: 1px dashed var(--line);
+  padding-top: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .nav__tabs {
+    flex-wrap: wrap;
+  }
+
+  .nav__tabs button {
+    padding: 0.4rem 0.7rem;
+  }
+
+  .segmented button {
+    padding: 0.4rem 0.75rem;
+  }
+}

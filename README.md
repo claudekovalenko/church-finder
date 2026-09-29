@@ -146,6 +146,24 @@ product.
 
 ---
 
+## Compare
+
+The Matches page answers *how well does this church score*. The Compare page answers
+a different question: value by value, where is the common ground?
+
+Pick the churches you are weighing — real congregations, and traditions too if you want
+a reference point. Each of your values is listed heaviest first, with **what you are
+looking for** on top and **what each church has** beneath it, marked *overlaps*,
+*partly*, *rubs*, or *not yet known*. A church past one of your dealbreakers says so.
+Where anything is unknown, the card ends with the question to ask.
+
+Each church also gets a summary: how much of what you *know* about it is shared
+ground, and how many values are still open. Unknowns are left out of the shared-ground
+figure rather than counted against the church, because a question you have not asked
+yet is not a mark against anyone.
+
+---
+
 ## The map
 
 Churches you have placed appear on a Leaflet map, coloured by verdict, with
@@ -226,6 +244,7 @@ The tests will tell you if you leave a tradition unscored on it.
 src/domain/axes.ts        the seventeen axes and what their positions mean
 src/domain/profile.ts     the default profile
 src/domain/match.ts       scoring, dealbreakers, confidence, question generation
+src/domain/compare.ts     value-by-value overlap for the Compare page
 src/domain/geo.ts         distance, commute reading, coordinate parsing
 src/migrate.ts            upgrades saved state when the defaults change
 src/data/traditions.ts    denominational archetypes
