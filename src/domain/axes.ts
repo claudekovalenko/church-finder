@@ -19,7 +19,7 @@ export const AXES: Axis[] = [
   {
     id: 'baptism',
     name: 'Baptism',
-    category: 'non-negotiable',
+    category: 'conviction',
     question: 'Who is baptism for?',
     diagnostic:
       'Do you baptize infants, and can someone be a member here without having been baptized as a believer?',
