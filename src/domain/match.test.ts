@@ -70,19 +70,19 @@ describe('the spiritual gifts axis is genuinely two-sided', () => {
 });
 
 describe('dealbreakers', () => {
-  const baptism = DEFAULT_PROFILE.preferences.find((p) => p.axisId === 'baptism')!;
+  const authority = DEFAULT_PROFILE.preferences.find((p) => p.axisId === 'authority')!;
 
-  it('fires on a known paedobaptist position', () => {
-    const broken = checkDealbreaker(baptism, datum(85));
+  it('fires on a known second authority alongside Scripture', () => {
+    const broken = checkDealbreaker(authority, datum(85));
     expect(broken?.firm).toBe(true);
   });
 
   it('does not fire inside the line', () => {
-    expect(checkDealbreaker(baptism, datum(25))).toBeNull();
+    expect(checkDealbreaker(authority, datum(25))).toBeNull();
   });
 
   it('flags but does not firmly rule out when the value is only a guess', () => {
-    const broken = checkDealbreaker(baptism, { value: 85, confidence: 0.3, provenance: 'assumed' });
+    const broken = checkDealbreaker(authority, { value: 85, confidence: 0.3, provenance: 'assumed' });
     expect(broken).not.toBeNull();
     expect(broken?.firm).toBe(false);
   });
@@ -91,7 +91,7 @@ describe('dealbreakers', () => {
     const values = Object.fromEntries(
       DEFAULT_PROFILE.preferences.map((p) => [p.axisId, datum(p.target, 1)]),
     );
-    values.baptism = { value: 85, confidence: 0.3, provenance: 'assumed' };
+    values.authority = { value: 85, confidence: 0.3, provenance: 'assumed' };
     const result = matchChurch(DEFAULT_PROFILE, church('soft', values));
     expect(result.verdict).toBe('possible-fit');
     expect(result.dealbreakers).toHaveLength(1);
@@ -163,11 +163,11 @@ describe('corroboration — guesses are not allowed to become conclusions', () =
     const r = matchChurch(
       DEFAULT_PROFILE,
       church('mixed', {
-        baptism: datum(0, 1, 'stated'),
+        authority: datum(0, 1, 'stated'),
         polity: datum(85, 1, 'assumed'),
       }),
     );
-    // Baptism carries weight 10, polity weight 9, both at full confidence.
+    // Authority carries weight 10, polity weight 9, both at full confidence.
     expect(r.corroboration).toBeCloseTo(10 / 19, 2);
   });
 
@@ -217,20 +217,29 @@ describe('the seeded traditions behave the way the convictions say they should',
     matchAll(DEFAULT_PROFILE, TRADITIONS).map((r) => [r.churchId, r]),
   );
 
-  it('rules out the paedobaptist families on baptism', () => {
-    for (const id of ['presbyterian-pca', 'lutheran-lcms', 'anglican-acna']) {
-      const r = results.get(id)!;
-      expect(r.verdict, id).toBe('ruled-out');
-      expect(r.dealbreakers.map((d) => d.axisId), id).toContain('baptism');
+  it('treats paedobaptism as a friction, not a wall', () => {
+    // Leaning baptistic, not against it: the PCA should cost something on
+    // baptism and still be in play.
+    const r = results.get('presbyterian-pca')!;
+    expect(r.verdict).not.toBe('ruled-out');
+    expect(r.frictions.map((f) => f.axisId)).toContain('baptism');
+    for (const t of TRADITIONS) {
+      expect(results.get(t.id)!.dealbreakers.map((d) => d.axisId), t.id).not.toContain('baptism');
     }
   });
 
-  it('rules out Rome and Orthodoxy on authority as well as baptism', () => {
+  it('rules out Rome and Orthodoxy on authority', () => {
     for (const id of ['roman-catholic', 'eastern-orthodox']) {
       const axes = results.get(id)!.dealbreakers.map((d) => d.axisId);
       expect(axes, id).toContain('authority');
-      expect(axes, id).toContain('baptism');
     }
+  });
+
+  it('counts size against the large contemporary churches', () => {
+    const fit = (id: string) =>
+      results.get(id)!.breakdown.find((b) => b.axisId === 'size')!.fit;
+    expect(fit('nondenominational-contemporary')).toBeLessThan(0.3);
+    expect(fit('reformed-baptist-1689')).toBeGreaterThanOrEqual(0.8);
   });
 
   it('rules out the progressive mainline on ethics', () => {

@@ -108,7 +108,7 @@ export function PlanView({
         ) : (
           questions.map(({ church, unknowns }, index) => (
             // Only the first is open. Early on, every church has the same
-            // fifteen unanswered questions, and stacking them all expanded
+            // seventeen unanswered questions, and stacking them all expanded
             // turns a work list into a wall.
             <details key={church.id} className="qblock" open={index === 0}>
               <summary className="qblock__head">

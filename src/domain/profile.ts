@@ -2,10 +2,11 @@ import { AXES } from './axes';
 import type { AxisPreference, Profile } from './types';
 
 /**
- * The starting profile: a Reformed Baptist frame, credobaptist and
- * complementarian, ordered continuationist rather than cessationist or
- * unbounded charismatic, expository, missional, and unwilling to sit under
- * leadership with no real accountability.
+ * The starting profile: a home church for a family. Inerrant Scripture,
+ * settled doctrine, complementarian, leaning baptistic without making it a
+ * wall, ordered continuationist, expository, missional, and unwilling to sit
+ * under leadership with no real accountability — and, weighted as heavily as
+ * any doctrine, healthy households and children who know the Lord.
  *
  * Every number here is meant to be argued with. Change them on the Profile
  * page; the file is only the starting point.
@@ -13,26 +14,24 @@ import type { AxisPreference, Profile } from './types';
 export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
   {
     axisId: 'baptism',
-    target: 0,
-    weight: 10,
-    mode: 'proximity',
-    tolerance: 35,
-    dealbreaker: {
-      above: 40,
-      reason:
-        'Credobaptist by conviction. A church that baptizes infants is not one you can be a member of in good conscience.',
-    },
+    // Leaning baptistic, not against paedobaptism: anything up to open
+    // credobaptist membership is full credit, and a paedobaptist church costs
+    // something without being ruled out.
+    target: 25,
+    weight: 5,
+    mode: 'atMost',
+    tolerance: 70,
   },
   {
     axisId: 'authority',
     target: 0,
     weight: 10,
     mode: 'proximity',
-    tolerance: 40,
+    tolerance: 30,
     dealbreaker: {
       above: 50,
       reason:
-        'Scripture is the final authority. Anything that binds the conscience alongside it — a magisterium, or a prophetic word that is never tested — is out.',
+        'Scripture is inerrant and the final authority. Anything that binds the conscience alongside it — a magisterium, or a prophetic word that is never tested — is out.',
     },
   },
   {
@@ -82,8 +81,10 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
   },
   {
     axisId: 'confession',
+    // Weighted up: a home church should already have its doctrine settled, so
+    // your energy goes outward rather than into correcting the pulpit.
     target: 85,
-    weight: 7,
+    weight: 9,
     mode: 'atLeast',
     tolerance: 50,
   },
@@ -119,6 +120,25 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
     tolerance: 50,
   },
   {
+    axisId: 'family-discipleship',
+    // As heavy as any doctrine. The question is whether your children will
+    // grow up among families you would want them to become.
+    target: 85,
+    weight: 10,
+    mode: 'atLeast',
+    tolerance: 50,
+  },
+  {
+    axisId: 'size',
+    // Somewhere your family can be known by name. Too small costs something
+    // too — children need other healthy families to grow up alongside — but
+    // it is the large end that turns a church into a place you attend.
+    target: 35,
+    weight: 6,
+    mode: 'proximity',
+    tolerance: 50,
+  },
+  {
     axisId: 'leader-development',
     target: 85,
     weight: 7,
@@ -142,7 +162,7 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
   {
     axisId: 'global-missions',
     target: 90,
-    weight: 8,
+    weight: 9,
     mode: 'atLeast',
     tolerance: 45,
   },
@@ -159,14 +179,17 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
 
 export const DEFAULT_PROFILE: Profile = {
   id: 'default',
-  name: 'Reformed Baptist, ordered continuationist',
+  name: 'A home church for my family',
   summary: [
-    'Closest to a Reformed Baptist confession. Credobaptist by conviction, complementarian,',
-    'and continuationist — the manifestations of the Spirit are real, but bounded by Scripture',
-    'and weighed by elders rather than left to run. Expository preaching, historic ethics,',
-    'a plurality of accountable elders. Missional: the gospel to this country and our own',
-    'people sent to the ends of the earth. Drawn to the every-member zeal of disciple-making',
-    'movements, unwilling to accept their lack of oversight. Open to eldership in time.',
+    'Held with humility — God may well dictate these differently. A home, not just somewhere',
+    'to attend: small enough to be known. God-centred and God-loving, people who deeply love',
+    'the Lord and let the Word be the Word — inerrant, with doctrine already settled so it',
+    'does not need constant correcting. Healthy families: humble, non-contentious marriages,',
+    'and honouring, obedient children who experience and know the Lord in a real and profound',
+    'way and go on to raise healthy families of their own. Leaning baptistic, though not',
+    'against paedobaptism; not concerned whether it is dispensational or covenantal.',
+    'Complementarian, with accountable elders. A real missional drive that treats eternity as',
+    'the thing to live and give everything for — a base to go out from and change the world.',
   ].join(' '),
   preferences: REFORMED_BAPTIST_CONTINUATIONIST,
   updatedAt: new Date().toISOString(),

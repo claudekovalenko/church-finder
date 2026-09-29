@@ -76,7 +76,7 @@ service worker needs a secure origin.
 
 ## How it thinks
 
-Fifteen axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
+Seventeen axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
 practice, mission, and style. Each axis is oriented so both ends are positions real
 churches actually hold — the axis stays neutral, and your profile decides which end you
 want.
@@ -109,9 +109,11 @@ out loud. The final score is the weighted average across every axis you have dat
 ### Dealbreakers
 
 Any axis can carry a hard limit. Cross it and the church is ruled out whatever it
-scores elsewhere, with the reason shown. The default profile sets six: baptism, the
+scores elsewhere, with the reason shown. The default profile sets five: the
 authority of Scripture, who may hold office, a floor on soteriology, a ceiling on
-charismatic practice, and a floor on elder oversight.
+charismatic practice, and a floor on elder oversight. Baptism is deliberately *not* one —
+the profile leans baptistic, so a paedobaptist church costs points without being ruled
+out.
 
 A dealbreaker only fires firmly on data you are actually confident in. A low-confidence
 guess raises the flag and caps the verdict, but it does not close the door — you go and
@@ -204,10 +206,15 @@ church's and which were yours.
 
 ## Making it yours
 
-The starting profile is a Reformed Baptist frame: credobaptist, complementarian,
-monergistic, expository, confessional, historic on ethics, ordered continuationist,
-missional, and unwilling to sit under leadership with no real accountability. Every
-number in it is meant to be argued with — change them on the Profile page, or edit
+The starting profile is looking for a *home* church for a family: inerrant Scripture
+and settled, confessional doctrine; complementarian, monergistic, expository, historic
+on ethics, ordered continuationist; leaning baptistic without making it a wall; indifferent
+between dispensational and covenantal; missional, with eternity as the thing to live
+for; and unwilling to sit under leadership with no real accountability. Weighted as
+heavily as any doctrine: **Families and children** — healthy, non-contentious marriages
+and children who honour their parents and know the Lord for themselves — and **Size and
+being known**, which prefers a congregation small enough that the elders can name your
+children. Every number in it is meant to be argued with — change them on the Profile page, or edit
 `src/domain/profile.ts` to change the defaults.
 
 To change the model itself rather than the profile, edit `src/domain/axes.ts`. Adding an
@@ -216,10 +223,11 @@ actually ask a pastor over coffee, since that string is what the app hands you l
 The tests will tell you if you leave a tradition unscored on it.
 
 ```
-src/domain/axes.ts        the fifteen axes and what their positions mean
+src/domain/axes.ts        the seventeen axes and what their positions mean
 src/domain/profile.ts     the default profile
 src/domain/match.ts       scoring, dealbreakers, confidence, question generation
 src/domain/geo.ts         distance, commute reading, coordinate parsing
+src/migrate.ts            upgrades saved state when the defaults change
 src/data/traditions.ts    denominational archetypes
 src/data/candidates.ts    the churches under consideration
 src/pwa.ts                service worker lifecycle and the install prompt

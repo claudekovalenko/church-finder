@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CANDIDATES } from './data/candidates';
 import { TRADITIONS } from './data/traditions';
 import { DEFAULT_PROFILE } from './domain/profile';
+import { CURRENT_REVISION, migrate } from './migrate';
 import type {
   AxisDatum,
   AxisId,
@@ -17,6 +18,8 @@ const STORAGE_KEY = 'church-finder/v1';
 export interface AppState {
   profile: Profile;
   churches: Church[];
+  /** Which seed revision this state has been migrated to. Absent means 1. */
+  revision?: number;
 }
 
 function seed(): AppState {
@@ -25,6 +28,7 @@ function seed(): AppState {
     // Candidates first: they are the actual decision. The traditions are
     // reference material for narrowing the field.
     churches: [...CANDIDATES, ...TRADITIONS],
+    revision: CURRENT_REVISION,
   };
 }
 
@@ -35,7 +39,7 @@ function load(): AppState {
     if (!raw) return seed();
     const parsed = JSON.parse(raw) as AppState;
     if (!parsed?.profile?.preferences || !Array.isArray(parsed.churches)) return seed();
-    return parsed;
+    return migrate(parsed);
   } catch {
     // A corrupt blob should not brick the app; falling back to the seed loses
     // saved work, which is why there is an export button.
@@ -179,7 +183,9 @@ export function useAppState() {
 
   const reset = useCallback(() => setState(seed()), []);
 
-  const replaceState = useCallback((next: AppState) => setState(next), []);
+  // An imported export may predate the current seed, so it goes through the
+  // same upgrade as anything loaded from storage.
+  const replaceState = useCallback((next: AppState) => setState(migrate(next)), []);
 
   const byId = useMemo(
     () => new Map(state.churches.map((c) => [c.id, c])),

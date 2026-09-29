@@ -1,7 +1,7 @@
 import type { Axis, AxisId } from './types';
 
 /**
- * The fifteen axes this app reasons about.
+ * The seventeen axes this app reasons about.
  *
  * Two design notes worth keeping in mind when editing these:
  *
@@ -64,15 +64,21 @@ export const AXES: Axis[] = [
     category: 'non-negotiable',
     question: 'What is the final court of appeal?',
     diagnostic:
-      'When tradition, a prophetic word, or a leader’s conviction conflicts with Scripture, what settles it — and who decides?',
+      'Do you hold that Scripture is inerrant — and when tradition, a prophetic word, or a leader’s conviction conflicts with it, what settles it, and who decides?',
     lowLabel: 'Scripture alone',
     highLabel: 'Scripture plus a second authority',
     anchors: [
       {
         value: 0,
-        label: 'Sola Scriptura',
+        label: 'Inerrant and sufficient',
         description:
-          'Scripture is the sole infallible rule of faith and practice; everything else is tested by it.',
+          'Scripture is without error and is the sole infallible rule of faith and practice; everything else is tested by it. The Word is allowed to be the Word.',
+      },
+      {
+        value: 15,
+        label: 'Sola Scriptura, inerrancy soft',
+        description:
+          'Scripture is the final authority, but inerrancy is not affirmed or is qualified away when the text is inconvenient.',
       },
       {
         value: 30,
@@ -400,6 +406,79 @@ export const AXES: Axis[] = [
         label: 'Covenant and discipline',
         description:
           'A written covenant, an interview process, and corrective discipline actually practised.',
+      },
+    ],
+  },
+  {
+    id: 'family-discipleship',
+    name: 'Families and children',
+    category: 'practice',
+    question: 'Are the families here healthy, and do the children know the Lord?',
+    diagnostic:
+      'How are fathers and mothers equipped to disciple their own children — and what are the children and teenagers here like when nobody is performing?',
+    lowLabel: 'Families left to themselves',
+    highLabel: 'Household discipleship is the culture',
+    anchors: [
+      {
+        value: 0,
+        label: 'Individuals, not households',
+        description:
+          'The church ministers to individuals. Marriage and parenting are treated as private, and rarely taught.',
+      },
+      {
+        value: 35,
+        label: 'Family-friendly programming',
+        description:
+          'Good children’s and youth programmes, but faith is handed to staff on Sunday rather than formed at home.',
+      },
+      {
+        value: 65,
+        label: 'Parents equipped',
+        description:
+          'Marriage, headship and parenting are taught from the text; parents are expected to lead worship at home.',
+      },
+      {
+        value: 100,
+        label: 'Healthy households are the fruit',
+        description:
+          'Visible fruit across the congregation: humble, non-contentious marriages; honouring, obedient children who know the Lord for themselves; grown children staying in the faith and raising families of their own.',
+      },
+    ],
+  },
+  {
+    id: 'size',
+    name: 'Size and being known',
+    category: 'practice',
+    question: 'Could your family be known and shepherded here?',
+    diagnostic:
+      'How many people are here on a Sunday — and could the elders name every member family and their children?',
+    lowLabel: 'House church',
+    highLabel: 'Megachurch / multisite',
+    anchors: [
+      {
+        value: 0,
+        label: 'House church',
+        description: 'Under about 30. Everyone is known, but there are few families to learn from.',
+      },
+      {
+        value: 30,
+        label: 'Small congregation',
+        description: 'Roughly 50–200. The elders know every household by name.',
+      },
+      {
+        value: 55,
+        label: 'Mid-sized',
+        description: 'Roughly 200–500. Known through a small group or ministry, not by the whole body.',
+      },
+      {
+        value: 80,
+        label: 'Large',
+        description: 'Roughly 500–2,000. Staff-led; you can attend for months without an elder knowing you.',
+      },
+      {
+        value: 100,
+        label: 'Megachurch / multisite',
+        description: 'Thousands, often across campuses. Easy to attend, hard to call home.',
       },
     ],
   },
