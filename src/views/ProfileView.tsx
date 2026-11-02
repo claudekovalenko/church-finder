@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { AXES, CATEGORY_LABELS } from '../domain/axes';
-import type { Axis, AxisPreference, Profile, ScoringMode } from '../domain/types';
+import { DEFAULT_CALLING } from '../domain/profile';
+import type { Axis, AxisPreference, Calling, Profile, ScoringMode } from '../domain/types';
 import { AnchorLabel } from '../components/common';
 import type { Actions } from '../store';
 
@@ -39,8 +41,10 @@ export function ProfileView({
         </div>
       </header>
 
+      <CallingSection calling={profile.calling ?? DEFAULT_CALLING} actions={actions} />
+
       <label className="field">
-        <span className="field__label">In your own words</span>
+        <span className="field__label">What you are looking for in a church, in your own words</span>
         <textarea
           rows={5}
           value={profile.summary}
@@ -63,6 +67,90 @@ export function ProfileView({
         </section>
       ))}
     </div>
+  );
+}
+
+const CALLING_FIELDS: { key: keyof Calling; label: string; hint: string }[] = [
+  { key: 'mission', label: 'The mission', hint: 'What would you give your life to?' },
+  {
+    key: 'family',
+    label: 'The family',
+    hint: 'The household you want to build, and what you want your children to become.',
+  },
+  { key: 'place', label: 'The place', hint: 'Where, and why there.' },
+  {
+    key: 'planting',
+    label: 'Church planting',
+    hint: 'Whether, when, and how you would want to be sent.',
+  },
+  {
+    key: 'forAWife',
+    label: 'What a wife would be signing up for',
+    hint: 'Said plainly, so nobody finds out later.',
+  },
+];
+
+function callingAsText(calling: Calling): string {
+  return CALLING_FIELDS.filter((f) => calling[f.key].trim())
+    .map((f) => `${f.label}\n${calling[f.key].trim()}`)
+    .join('\n\n');
+}
+
+/**
+ * The calling sits above the axes because it is the reason for them: the
+ * church you are looking for is the one that can form and send the person
+ * described here.
+ */
+function CallingSection({ calling, actions }: { calling: Calling; actions: Actions }) {
+  const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const set = (key: keyof Calling, value: string) => {
+    setCopy('idle');
+    actions.updateProfile({ calling: { ...calling, [key]: value } });
+  };
+  const share = async () => {
+    try {
+      await navigator.clipboard.writeText(callingAsText(calling));
+      setCopy('copied');
+    } catch {
+      // Sandboxed hosts and older browsers refuse the clipboard; show the
+      // text so it can be selected by hand instead.
+      setCopy('failed');
+    }
+  };
+
+  return (
+    <section className="section calling">
+      <div className="calling__head">
+        <div>
+          <h2>Your calling</h2>
+          <p className="view__lede">
+            What you are actually going after, written plainly enough that someone joining your
+            life would know what they are saying yes to. The first draft came from what you have
+            said; rewrite it until it sounds like you.
+          </p>
+        </div>
+        <button className="button button--small" onClick={share}>
+          {copy === 'copied' ? 'Copied' : 'Copy as text'}
+        </button>
+      </div>
+      {CALLING_FIELDS.map((f) => (
+        <label key={f.key} className="field">
+          <span className="field__label">{f.label}</span>
+          <textarea
+            rows={3}
+            value={calling[f.key]}
+            placeholder={f.hint}
+            onChange={(e) => set(f.key, e.target.value)}
+          />
+        </label>
+      ))}
+      {copy === 'failed' && (
+        <label className="field">
+          <span className="field__label">This browser blocked copying — select the text here</span>
+          <textarea readOnly rows={10} value={callingAsText(calling)} onFocus={(e) => e.target.select()} />
+        </label>
+      )}
+    </section>
   );
 }
 

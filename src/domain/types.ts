@@ -86,7 +86,26 @@ export interface Profile {
    * is a church you will never actually belong to.
    */
   home?: GeoPoint;
+  /**
+   * What you are actually going after, written down plainly enough that
+   * someone joining your life could read it and know what they are signing
+   * up for. It is not scored; it is the reason the scoring exists.
+   */
+  calling?: Calling;
   updatedAt: string;
+}
+
+export interface Calling {
+  /** The mission itself: what you would give your life to. */
+  mission: string;
+  /** The household you want to build, and what you want your children to become. */
+  family: string;
+  /** Where, and why there. */
+  place: string;
+  /** Church planting: whether, when, and what it would ask of a family. */
+  planting: string;
+  /** What a wife would be saying yes to, stated without softening. */
+  forAWife: string;
 }
 
 export interface GeoPoint {

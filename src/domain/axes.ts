@@ -1,7 +1,7 @@
 import type { Axis, AxisId } from './types';
 
 /**
- * The seventeen axes this app reasons about.
+ * The eighteen axes this app reasons about.
  *
  * Two design notes worth keeping in mind when editing these:
  *
@@ -623,6 +623,42 @@ export const AXES: Axis[] = [
         label: 'Sending church',
         description:
           'Identifies, trains, sends, and shepherds its own members to the unreached as a settled practice.',
+      },
+    ],
+  },
+
+  {
+    id: 'church-planting',
+    name: 'Church planting',
+    category: 'mission',
+    question: 'Does this church plant churches — and could it send you?',
+    diagnostic:
+      'When did this church last plant a church, and if a man here believed he was called to plant, how would you test that, train him, and send him?',
+    lowLabel: 'Not planting',
+    highLabel: 'Plants and sends planters',
+    anchors: [
+      {
+        value: 0,
+        label: 'Not on the radar',
+        description: 'Planting is not part of the church’s life, prayers, or budget.',
+      },
+      {
+        value: 35,
+        label: 'Supports planting',
+        description:
+          'Gives to a network’s or denomination’s planting fund, without planting itself.',
+      },
+      {
+        value: 65,
+        label: 'Has planted',
+        description:
+          'Has sent a team out to plant within the last decade, or hosts a planter in residency.',
+      },
+      {
+        value: 100,
+        label: 'A planting church',
+        description:
+          'Identifies, assesses, trains and sends its own men as planters with a core team — and keeps shepherding them after they go.',
       },
     ],
   },

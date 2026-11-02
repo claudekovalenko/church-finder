@@ -1,5 +1,5 @@
 import { AXES } from './domain/axes';
-import { DEFAULT_PROFILE } from './domain/profile';
+import { DEFAULT_CALLING, DEFAULT_PROFILE } from './domain/profile';
 import { CANDIDATES } from './data/candidates';
 import { TRADITIONS } from './data/traditions';
 import type { AxisPreference, Church, Profile } from './domain/types';
@@ -12,7 +12,7 @@ import type { AxisPreference, Church, Profile } from './domain/types';
  * The rule throughout: only replace what still matches the old seed exactly.
  * Anything you edited yourself is yours and is left alone.
  */
-export const CURRENT_REVISION = 2;
+export const CURRENT_REVISION = 3;
 
 export interface StoredState {
   profile: Profile;
@@ -59,6 +59,19 @@ const V1_PREFERENCES: Record<string, AxisPreference> = {
 const V1_PROFILE_NAME = 'Reformed Baptist, ordered continuationist';
 const V1_MARINERS_SUMMARY = 'Unclear on their positions — that is the finding, for now.';
 
+/** The summary revision 2 shipped, before church planting was added to it. */
+const V2_SUMMARY = [
+  'Held with humility — God may well dictate these differently. A home, not just somewhere',
+  'to attend: small enough to be known. God-centred and God-loving, people who deeply love',
+  'the Lord and let the Word be the Word — inerrant, with doctrine already settled so it',
+  'does not need constant correcting. Healthy families: humble, non-contentious marriages,',
+  'and honouring, obedient children who experience and know the Lord in a real and profound',
+  'way and go on to raise healthy families of their own. Leaning baptistic, though not',
+  'against paedobaptism; not concerned whether it is dispensational or covenantal.',
+  'Complementarian, with accountable elders. A real missional drive that treats eternity as',
+  'the thing to live and give everything for — a base to go out from and change the world.',
+].join(' ');
+
 function same(a: unknown, b: unknown): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
@@ -80,10 +93,14 @@ function migrateProfile(profile: Profile, from: number): Profile {
   preferences = [...preferences, ...missing];
 
   const untouched = from < 2 && profile.name === V1_PROFILE_NAME;
+  const summaryUntouched = from < 3 && profile.summary === V2_SUMMARY;
   return {
     ...profile,
     preferences,
     ...(untouched ? { name: DEFAULT_PROFILE.name, summary: DEFAULT_PROFILE.summary } : {}),
+    ...(summaryUntouched ? { summary: DEFAULT_PROFILE.summary } : {}),
+    // Never written before this revision, so there is nothing of yours to keep.
+    calling: profile.calling ?? DEFAULT_CALLING,
   };
 }
 

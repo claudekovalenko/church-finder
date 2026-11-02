@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { migrate, CURRENT_REVISION } from './migrate';
-import { DEFAULT_PROFILE } from './domain/profile';
+import { DEFAULT_CALLING, DEFAULT_PROFILE } from './domain/profile';
 import { AXES } from './domain/axes';
 import { TRADITIONS } from './data/traditions';
 import type { Church, Profile } from './domain/types';
 
 /** A saved state as revision 1 of the app wrote it. */
 function v1State(profileEdits: Partial<Profile> = {}) {
-  const newAxes = ['family-discipleship', 'size'];
+  const newAxes = ['family-discipleship', 'size', 'church-planting'];
   const profile: Profile = {
     ...DEFAULT_PROFILE,
     name: 'Reformed Baptist, ordered continuationist',
@@ -89,6 +89,16 @@ describe('migrating saved state', () => {
     const edited = v1State();
     edited.churches[0] = { ...edited.churches[0], stage: 'visiting', summary: 'my note' };
     expect(migrate(edited).churches[0].stage).toBe('visiting');
+  });
+
+  it('gives a revision 2 profile a calling, and keeps one you have written', () => {
+    const v2 = { ...migrate(v1State()), revision: 2 };
+    delete v2.profile.calling;
+    expect(migrate(v2).profile.calling).toEqual(DEFAULT_CALLING);
+
+    const mine = { ...DEFAULT_CALLING, place: 'San Diego' };
+    const kept = migrate({ ...v2, profile: { ...v2.profile, calling: mine } });
+    expect(kept.profile.calling!.place).toBe('San Diego');
   });
 
   it('is idempotent', () => {

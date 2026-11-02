@@ -1,5 +1,5 @@
 import { AXES } from './axes';
-import type { AxisPreference, Profile } from './types';
+import type { AxisPreference, Calling, Profile } from './types';
 
 /**
  * The starting profile: a home church for a family. Inerrant Scripture,
@@ -167,6 +167,16 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
     tolerance: 45,
   },
   {
+    axisId: 'church-planting',
+    // Not settled yet, so not a dealbreaker — but a church that has never
+    // planted cannot show you how it is done, test whether you are called to
+    // it, or send you well if you are.
+    target: 80,
+    weight: 7,
+    mode: 'atLeast',
+    tolerance: 50,
+  },
+  {
     axisId: 'worship-style',
     target: 50,
     weight: 3,
@@ -176,6 +186,34 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
     tolerance: 60,
   },
 ];
+
+/**
+ * A first draft, put together from what you have said out loud. It is meant to
+ * be rewritten in your own words — the point is that it exists on paper.
+ */
+export const DEFAULT_CALLING: Calling = {
+  mission: [
+    'Making disciples who make disciples, from a local church with healthy theology —',
+    'the Word held as a sword, not danced around — and eternity as the thing to live for.',
+  ].join(' '),
+  family: [
+    'A household where the children grow up among healthy families: a humble marriage,',
+    'children who know the Lord for themselves, and a church that helps us raise them.',
+  ].join(' '),
+  place: [
+    'Southern California, because the mission field is here and I have peace about it.',
+    'Somewhere a family can put down roots — not set on Los Angeles itself.',
+  ].join(' '),
+  planting: [
+    'Seriously considering it. First, to be known, tested and trained in a sound local',
+    'church, so that if I go, I am sent rather than self-appointed.',
+  ].join(' '),
+  forAWife: [
+    'A life aimed at the church and the mission, not at comfort: membership and service',
+    'in a local church, a home open to others, and possibly the cost and uncertainty of',
+    'planting. Better said clearly now than discovered later.',
+  ].join(' '),
+};
 
 export const DEFAULT_PROFILE: Profile = {
   id: 'default',
@@ -190,7 +228,9 @@ export const DEFAULT_PROFILE: Profile = {
     'against paedobaptism; not concerned whether it is dispensational or covenantal.',
     'Complementarian, with accountable elders. A real missional drive that treats eternity as',
     'the thing to live and give everything for — a base to go out from and change the world.',
+    'A church that plants churches, and could train and send me if that is the call.',
   ].join(' '),
+  calling: DEFAULT_CALLING,
   preferences: REFORMED_BAPTIST_CONTINUATIONIST,
   updatedAt: new Date().toISOString(),
 };

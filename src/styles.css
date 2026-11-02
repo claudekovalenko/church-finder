@@ -450,6 +450,14 @@ main {
   margin-bottom: 0.5rem;
 }
 
+.calling__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .field {
   display: block;
   margin: 1rem 0;

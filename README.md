@@ -76,7 +76,7 @@ service worker needs a secure origin.
 
 ## How it thinks
 
-Seventeen axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
+Eighteen axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
 practice, mission, and style. Each axis is oriented so both ends are positions real
 churches actually hold — the axis stays neutral, and your profile decides which end you
 want.
@@ -222,13 +222,27 @@ church's and which were yours.
 
 ---
 
+## Your calling
+
+At the top of the Profile page is a short written statement of what you are going
+after: the mission, the family you want to build, the place, whether you mean to
+plant a church, and what a wife would be signing up for. None of it is scored. It is
+there because the church you are looking for is the one that can form and send the
+person it describes, and because a calling that only lives in your head is easy to
+blur when it is inconvenient. **Copy as text** puts it on the clipboard to share.
+
+The first draft is assembled from things you have said. Rewrite it.
+
+---
+
 ## Making it yours
 
 The starting profile is looking for a *home* church for a family: inerrant Scripture
 and settled, confessional doctrine; complementarian, monergistic, expository, historic
 on ethics, ordered continuationist; leaning baptistic without making it a wall; indifferent
 between dispensational and covenantal; missional, with eternity as the thing to live
-for; and unwilling to sit under leadership with no real accountability. Weighted as
+for, and looking for a church that plants churches and could send you; and unwilling
+to sit under leadership with no real accountability. Weighted as
 heavily as any doctrine: **Families and children** — healthy, non-contentious marriages
 and children who honour their parents and know the Lord for themselves — and **Size and
 being known**, which prefers a congregation small enough that the elders can name your
@@ -241,7 +255,7 @@ actually ask a pastor over coffee, since that string is what the app hands you l
 The tests will tell you if you leave a tradition unscored on it.
 
 ```
-src/domain/axes.ts        the seventeen axes and what their positions mean
+src/domain/axes.ts        the eighteen axes and what their positions mean
 src/domain/profile.ts     the default profile
 src/domain/match.ts       scoring, dealbreakers, confidence, question generation
 src/domain/compare.ts     value-by-value overlap for the Compare page
