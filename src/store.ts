@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CANDIDATES } from './data/candidates';
+import { LOCAL_CHURCHES } from './data/local';
 import { TRADITIONS } from './data/traditions';
 import { DEFAULT_PROFILE } from './domain/profile';
 import { CURRENT_REVISION, migrate } from './migrate';
@@ -27,7 +28,7 @@ function seed(): AppState {
     profile: DEFAULT_PROFILE,
     // Candidates first: they are the actual decision. The traditions are
     // reference material for narrowing the field.
-    churches: [...CANDIDATES, ...TRADITIONS],
+    churches: [...CANDIDATES, ...LOCAL_CHURCHES, ...TRADITIONS],
     revision: CURRENT_REVISION,
   };
 }

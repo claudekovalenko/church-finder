@@ -18,6 +18,7 @@ export function MatchesView({
 }) {
   const [filter, setFilter] = useState<Filter>('candidates');
   const [showRuledOut, setShowRuledOut] = useState(false);
+  const [showLongList, setShowLongList] = useState(false);
 
   const visible = useMemo(() => {
     return churches.filter((c) => {
@@ -30,8 +31,13 @@ export function MatchesView({
   const results = useMemo(() => matchAll(profile, visible), [profile, visible]);
   const byId = useMemo(() => new Map(churches.map((c) => [c.id, c])), [churches]);
 
-  const shown = showRuledOut ? results : results.filter((r) => r.verdict !== 'ruled-out');
-  const hiddenCount = results.length - shown.length;
+  const longList = results.filter((r) => byId.get(r.churchId)?.stage === 'long-list');
+  const shown = results.filter(
+    (r) =>
+      (showRuledOut || r.verdict !== 'ruled-out') &&
+      (showLongList || byId.get(r.churchId)?.stage !== 'long-list'),
+  );
+  const hiddenCount = results.filter((r) => r.verdict === 'ruled-out').length;
 
   return (
     <div className="view">
@@ -63,7 +69,14 @@ export function MatchesView({
             </button>
           ))}
         </div>
-        {hiddenCount > 0 && (
+        {longList.length > 0 && (
+          <button className="link" onClick={() => setShowLongList((v) => !v)}>
+            {showLongList
+              ? 'Hide the long list'
+              : `Show ${longList.length} not yet looked at`}
+          </button>
+        )}
+        {hiddenCount > 0 && !showRuledOut && (
           <button className="link" onClick={() => setShowRuledOut(true)}>
             Show {hiddenCount} ruled out
           </button>

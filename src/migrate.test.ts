@@ -3,6 +3,8 @@ import { migrate, CURRENT_REVISION } from './migrate';
 import { DEFAULT_CALLING, DEFAULT_PROFILE } from './domain/profile';
 import { AXES } from './domain/axes';
 import { TRADITIONS } from './data/traditions';
+import { CANDIDATES } from './data/candidates';
+import { LOCAL_CHURCHES } from './data/local';
 import type { Church, Profile } from './domain/types';
 
 /** A saved state as revision 1 of the app wrote it. */
@@ -99,6 +101,40 @@ describe('migrating saved state', () => {
     const mine = { ...DEFAULT_CALLING, place: 'San Diego' };
     const kept = migrate({ ...v2, profile: { ...v2.profile, calling: mine } });
     expect(kept.profile.calling!.place).toBe('San Diego');
+  });
+
+  it('adds the long list once, before the traditions, and never re-adds a deleted church', () => {
+    const v3 = { ...migrate(v1State()), revision: 3 };
+    v3.churches = v3.churches.filter((c) => c.stage !== 'long-list');
+    const next = migrate(v3);
+    const ids = next.churches.map((c) => c.id);
+    for (const c of LOCAL_CHURCHES) expect(ids, c.id).toContain(c.id);
+    const lastLocal = Math.max(...LOCAL_CHURCHES.map((c) => ids.indexOf(c.id)));
+    const firstTradition = next.churches.findIndex((c) => c.kind === 'tradition');
+    expect(lastLocal).toBeLessThan(firstTradition);
+
+    const pruned = { ...next, churches: next.churches.filter((c) => c.id !== LOCAL_CHURCHES[0].id) };
+    expect(migrate(pruned).churches.map((c) => c.id)).not.toContain(LOCAL_CHURCHES[0].id);
+  });
+
+  it('fills in the placeholder shortlist entries, keeping anything you wrote', () => {
+    const trinity: Church = {
+      ...CANDIDATES.find((c) => c.id === 'trinity-reformed-baptist')!,
+      summary: 'Confessional Reformed Baptist, by the name.',
+      locale: undefined,
+      affiliation: undefined,
+      website: undefined,
+    };
+    const sg: Church = {
+      ...CANDIDATES.find((c) => c.id === 'sovereign-grace')!,
+      name: 'Sovereign Grace (local congregation)',
+      locale: 'my note',
+    };
+    const next = migrate({ profile: DEFAULT_PROFILE, churches: [trinity, sg], revision: 3 });
+    expect(next.churches[0].locale).toContain('La Mirada');
+    expect(next.churches[0].summary).toContain('Renihan');
+    expect(next.churches[1].name).toBe('Sovereign Grace Church of Orange');
+    expect(next.churches[1].locale).toBe('my note');
   });
 
   it('is idempotent', () => {

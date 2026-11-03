@@ -76,7 +76,7 @@ service worker needs a secure origin.
 
 ## How it thinks
 
-Eighteen axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
+Twenty axes, each a 0–100 spectrum, grouped into non-negotiables, convictions, church
 practice, mission, and style. Each axis is oriented so both ends are positions real
 churches actually hold — the axis stays neutral, and your profile decides which end you
 want.
@@ -222,6 +222,38 @@ church's and which were yours.
 
 ---
 
+## The long list
+
+About forty-five Protestant churches from Buena Park out to Huntington Beach ship with
+the app, gathered from church directories, network listings (the Gospel Coalition's
+Orange County chapter, Founders, Sovereign Grace, the OPC, the Southern California
+Reformed Baptist association) and Biola's local church list. Each carries what the
+listing said — address, affiliation, a pastor's name where one was given — and
+**nothing about doctrine**, for the same reason as every other real church here.
+
+They start in their own stage, *Not yet looked at*. That keeps them off the Plan
+page's question list and hidden on Matches until you ask for them; moving one to
+Shortlist is how it enters the work. Addresses came from directories and some
+disagree; the notes say where. Churches without map coordinates get a "Look it up in
+Maps" link, so placing one is a search, a copy and a paste.
+
+Left out on purpose: Roman Catholic, Orthodox, Latter-day Saint, Jehovah's Witness,
+Seventh-day Adventist, Christian Science, Oneness Pentecostal and progressive mainline
+congregations.
+
+---
+
+## Networks
+
+A separate tab for the national picture: denominations, associations and church
+directories sorted into *closest to you*, *sound with a real difference*, and *ruled
+out*, each with a one-line stance, why it sits where it does, a link to its church
+finder, and — where the family has an archetype — a link to score it. Below that, a
+handful of well-known congregations as reference points for what health looks like in
+each family. None of it is scored; it is there for orientation.
+
+---
+
 ## Your calling
 
 At the top of the Profile page is a short written statement of what you are going
@@ -241,7 +273,8 @@ The starting profile is looking for a *home* church for a family: inerrant Scrip
 and settled, confessional doctrine; complementarian, monergistic, expository, historic
 on ethics, ordered continuationist; leaning baptistic without making it a wall; indifferent
 between dispensational and covenantal; missional, with eternity as the thing to live
-for, and looking for a church that plants churches and could send you; and unwilling
+for, and looking for a church that plants churches and could send you; clear that
+partiality by ethnicity is sin without being captured by a political side; and unwilling
 to sit under leadership with no real accountability. Weighted as
 heavily as any doctrine: **Families and children** — healthy, non-contentious marriages
 and children who honour their parents and know the Lord for themselves — and **Size and
@@ -255,7 +288,7 @@ actually ask a pastor over coffee, since that string is what the app hands you l
 The tests will tell you if you leave a tradition unscored on it.
 
 ```
-src/domain/axes.ts        the eighteen axes and what their positions mean
+src/domain/axes.ts        the twenty axes and what their positions mean
 src/domain/profile.ts     the default profile
 src/domain/match.ts       scoring, dealbreakers, confidence, question generation
 src/domain/compare.ts     value-by-value overlap for the Compare page
@@ -263,6 +296,8 @@ src/domain/geo.ts         distance, commute reading, coordinate parsing
 src/migrate.ts            upgrades saved state when the defaults change
 src/data/traditions.ts    denominational archetypes
 src/data/candidates.ts    the churches under consideration
+src/data/local.ts         the long list of local churches
+src/data/networks.ts      networks, denominations and notable churches across the US
 src/pwa.ts                service worker lifecycle and the install prompt
 scripts/make-icons.mjs    regenerates the app icons from one vector definition
 ```

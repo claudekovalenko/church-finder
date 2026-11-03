@@ -1,6 +1,7 @@
 import { AXES } from './domain/axes';
 import { DEFAULT_CALLING, DEFAULT_PROFILE } from './domain/profile';
 import { CANDIDATES } from './data/candidates';
+import { LOCAL_CHURCHES } from './data/local';
 import { TRADITIONS } from './data/traditions';
 import type { AxisPreference, Church, Profile } from './domain/types';
 
@@ -12,7 +13,7 @@ import type { AxisPreference, Church, Profile } from './domain/types';
  * The rule throughout: only replace what still matches the old seed exactly.
  * Anything you edited yourself is yours and is left alone.
  */
-export const CURRENT_REVISION = 3;
+export const CURRENT_REVISION = 4;
 
 export interface StoredState {
   profile: Profile;
@@ -56,6 +57,13 @@ const V1_PREFERENCES: Record<string, AxisPreference> = {
   },
 };
 
+/** Shortlist entries revision 3 shipped as placeholders, keyed by id. */
+const V3_PLACEHOLDER_NAMES: Record<string, string> = {
+  'trinity-reformed-baptist': 'Trinity Reformed Baptist Church',
+  'sovereign-grace': 'Sovereign Grace (local congregation)',
+};
+const V3_TRINITY_SUMMARY = 'Confessional Reformed Baptist, by the name.';
+
 const V1_PROFILE_NAME = 'Reformed Baptist, ordered continuationist';
 const V1_MARINERS_SUMMARY = 'Unclear on their positions — that is the finding, for now.';
 
@@ -70,6 +78,12 @@ const V2_SUMMARY = [
   'against paedobaptism; not concerned whether it is dispensational or covenantal.',
   'Complementarian, with accountable elders. A real missional drive that treats eternity as',
   'the thing to live and give everything for — a base to go out from and change the world.',
+].join(' ');
+
+/** The summary revision 3 shipped, before race and politics were added to it. */
+const V3_SUMMARY = [
+  V2_SUMMARY,
+  'A church that plants churches, and could train and send me if that is the call.',
 ].join(' ');
 
 function same(a: unknown, b: unknown): boolean {
@@ -93,7 +107,8 @@ function migrateProfile(profile: Profile, from: number): Profile {
   preferences = [...preferences, ...missing];
 
   const untouched = from < 2 && profile.name === V1_PROFILE_NAME;
-  const summaryUntouched = from < 3 && profile.summary === V2_SUMMARY;
+  const summaryUntouched =
+    (from < 3 && profile.summary === V2_SUMMARY) || (from < 4 && profile.summary === V3_SUMMARY);
   return {
     ...profile,
     preferences,
@@ -115,6 +130,22 @@ function migrateChurch(church: Church, from: number): Church {
     return { ...church, values };
   }
 
+  // Revision 4 found the actual congregations behind two placeholders. Fill in
+  // where they are and who they are, but only over fields you never touched.
+  if (from < 4 && V3_PLACEHOLDER_NAMES[church.id] === church.name) {
+    const seed = CANDIDATES.find((c) => c.id === church.id)!;
+    const untouchedSummary =
+      church.id === 'trinity-reformed-baptist' ? church.summary === V3_TRINITY_SUMMARY : true;
+    return {
+      ...church,
+      name: church.id === 'sovereign-grace' ? seed.name : church.name,
+      locale: church.locale || seed.locale,
+      affiliation: church.affiliation || seed.affiliation,
+      website: church.website || seed.website,
+      ...(untouchedSummary && church.id === 'trinity-reformed-baptist' ? { summary: seed.summary } : {}),
+    };
+  }
+
   if (from < 2 && church.id === 'mariners' && church.summary === V1_MARINERS_SUMMARY) {
     const seed = CANDIDATES.find((c) => c.id === 'mariners')!;
     return { ...church, stage: seed.stage, summary: seed.summary, notes: seed.notes };
@@ -123,12 +154,25 @@ function migrateChurch(church: Church, from: number): Church {
   return church;
 }
 
+/**
+ * The long list arrived in revision 4. Add it once, after your own candidates
+ * and before the traditions; after that, a church you delete stays deleted.
+ */
+function addLongList(churches: Church[], from: number): Church[] {
+  if (from >= 4) return churches;
+  const have = new Set(churches.map((c) => c.id));
+  const add = LOCAL_CHURCHES.filter((c) => !have.has(c.id));
+  const firstTradition = churches.findIndex((c) => c.kind === 'tradition');
+  const at = firstTradition === -1 ? churches.length : firstTradition;
+  return [...churches.slice(0, at), ...add, ...churches.slice(at)];
+}
+
 export function migrate<T extends StoredState>(state: T): T & { revision: number } {
   const from = state.revision ?? 1;
   return {
     ...state,
     profile: migrateProfile(state.profile, from),
-    churches: state.churches.map((c) => migrateChurch(c, from)),
+    churches: addLongList(state.churches.map((c) => migrateChurch(c, from)), from),
     revision: CURRENT_REVISION,
   };
 }

@@ -10,6 +10,7 @@ import type { Actions } from '../store';
 const PROVENANCES: Provenance[] = ['stated', 'observed', 'inferred', 'assumed'];
 
 const STAGE_LABEL: Record<Stage, string> = {
+  'long-list': 'Not yet looked at',
   shortlist: 'Shortlist',
   researching: 'Researching',
   visiting: 'Visiting',
@@ -102,6 +103,20 @@ export function ChurchView({
       </div>
 
       <LocationField church={church} profile={profile} actions={actions} />
+      {church.kind === 'candidate' && !church.location && church.locale && (
+        <p className="field__hint">
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              `${church.name}, ${church.locale}`,
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Look it up in Maps
+          </a>{' '}
+          — then copy the link and paste it above to place it.
+        </p>
+      )}
 
       <div className="progress">
         <Meter

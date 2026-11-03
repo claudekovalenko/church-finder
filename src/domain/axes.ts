@@ -1,7 +1,7 @@
 import type { Axis, AxisId } from './types';
 
 /**
- * The eighteen axes this app reasons about.
+ * The twenty axes this app reasons about.
  *
  * Two design notes worth keeping in mind when editing these:
  *
@@ -327,6 +327,82 @@ export const AXES: Axis[] = [
         label: 'Historic, taught',
         description:
           'Holds and teaches the historic Christian ethic clearly and pastorally.',
+      },
+    ],
+  },
+  {
+    id: 'race-and-identity',
+    name: 'Race and identity',
+    category: 'conviction',
+    question: 'Does the church treat people by ethnicity, or by Christ?',
+    diagnostic:
+      'How do you teach on race and justice — and when you choose elders and deacons, does ethnicity or representation ever factor in?',
+    lowLabel: 'Identity frameworks',
+    highLabel: 'One new man, stated',
+    anchors: [
+      {
+        value: 0,
+        label: 'Identity frameworks',
+        description:
+          'Group-identity categories shape the teaching: guilt or standing assigned by ethnicity, and leadership chosen partly for representation.',
+      },
+      {
+        value: 35,
+        label: 'Leans in',
+        description:
+          'Regular emphasis on systemic and group categories; diversity goals for leadership, even where not formal.',
+      },
+      {
+        value: 65,
+        label: 'Gospel unity, quiet',
+        description:
+          'Holds that all are one in Christ and appoints by qualification, but rarely addresses the question directly.',
+      },
+      {
+        value: 100,
+        label: 'Gospel unity, taught',
+        description:
+          'Teaches plainly that partiality by ethnicity in any direction is sin, condemns real racism, and appoints only on the qualifications of 1 Timothy 3 — with clarity, not combativeness.',
+      },
+    ],
+  },
+  {
+    id: 'partisanship',
+    name: 'Politics in the pulpit',
+    category: 'conviction',
+    question: 'Is the church captured by a political side?',
+    diagnostic:
+      'How does the pulpit handle elections and political issues — where does preaching the text end and taking a side begin?',
+    lowLabel: 'Partisan left',
+    highLabel: 'Partisan right',
+    anchors: [
+      {
+        value: 0,
+        label: 'Partisan left',
+        description:
+          'Progressive political causes are preached as gospel obligations; disagreement is treated as sin.',
+      },
+      {
+        value: 25,
+        label: 'Leans left',
+        description: 'Political commentary is common, and runs one way.',
+      },
+      {
+        value: 50,
+        label: 'Non-partisan',
+        description:
+          'Says what Scripture says, including where it cuts against a party, and leaves the voting booth to conscience. Not entrenched.',
+      },
+      {
+        value: 75,
+        label: 'Leans right',
+        description: 'Political commentary is common, and runs one way.',
+      },
+      {
+        value: 100,
+        label: 'Partisan right',
+        description:
+          'Conservative political causes are preached as gospel obligations; the church’s identity is bound up with a movement.',
       },
     ],
   },

@@ -3,6 +3,8 @@ import { axisFit, checkDealbreaker, matchAll, matchChurch, openQuestions } from 
 import { DEFAULT_PROFILE } from './profile';
 import { TRADITIONS } from '../data/traditions';
 import { CANDIDATES } from '../data/candidates';
+import { LOCAL_CHURCHES } from '../data/local';
+import { NETWORKS } from '../data/networks';
 import { AXES } from './axes';
 import type { AxisDatum, Church, Provenance } from './types';
 
@@ -309,11 +311,42 @@ describe('the named candidates ship without invented data', () => {
   });
 });
 
+describe('the long list', () => {
+  it('carries no doctrinal values and starts every church unexamined', () => {
+    for (const c of LOCAL_CHURCHES) {
+      expect(Object.keys(c.values), c.name).toHaveLength(0);
+      expect(c.stage, c.name).toBe('long-list');
+      expect(c.kind, c.name).toBe('candidate');
+      expect(c.locale, c.name).toBeTruthy();
+      expect(c.affiliation, c.name).toBeTruthy();
+    }
+  });
+
+  it('only hints at traditions that exist', () => {
+    for (const c of LOCAL_CHURCHES.filter((x) => x.traditionId)) {
+      expect(TRADITIONS.some((t) => t.id === c.traditionId), c.name).toBe(true);
+    }
+  });
+});
+
+describe('the networks', () => {
+  it('links only to traditions that exist', () => {
+    for (const n of NETWORKS.filter((x) => x.traditionId)) {
+      expect(TRADITIONS.some((t) => t.id === n.traditionId), n.id).toBe(true);
+    }
+  });
+
+  it('rules out the groups you named', () => {
+    const outside = NETWORKS.filter((n) => n.fit === 'outside').map((n) => n.id);
+    expect(outside).toEqual(expect.arrayContaining(['sda', 'lds', 'jw']));
+  });
+});
+
 describe('model integrity', () => {
   it('gives every church a unique id', () => {
     // A collision here is invisible in the data and disastrous in the UI: two
     // entries share a key, and one silently renders in place of the other.
-    const ids = [...TRADITIONS, ...CANDIDATES].map((c) => c.id);
+    const ids = [...TRADITIONS, ...CANDIDATES, ...LOCAL_CHURCHES].map((c) => c.id);
     expect(ids).toHaveLength(new Set(ids).size);
   });
 

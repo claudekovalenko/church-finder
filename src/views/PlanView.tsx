@@ -6,6 +6,7 @@ import { Empty, VerdictChip } from '../components/common';
 import type { Actions } from '../store';
 
 const STAGE_LABEL: Record<Stage, string> = {
+  'long-list': 'Not yet looked at',
   shortlist: 'Shortlist',
   researching: 'Researching',
   visiting: 'Visiting',
@@ -15,6 +16,7 @@ const STAGE_LABEL: Record<Stage, string> = {
 };
 
 const STAGE_HELP: Record<Stage, string> = {
+  'long-list': 'From a directory. Move one to Shortlist to start asking about it.',
   shortlist: 'Worth a look. Nothing invested yet.',
   researching: 'Reading what they publish and working out what they do not say.',
   visiting: 'Sitting under the preaching often enough to judge it fairly.',
@@ -35,7 +37,10 @@ export function PlanView({
   onOpen: (id: string) => void;
 }) {
   const candidates = useMemo(() => churches.filter((c) => c.kind === 'candidate'), [churches]);
-  const questions = useMemo(() => openQuestions(profile, candidates), [profile, candidates]);
+  // The long list is dozens of churches with every question unanswered; listing
+  // them all would bury the questions for churches you are actually pursuing.
+  const pursued = useMemo(() => candidates.filter((c) => c.stage !== 'long-list'), [candidates]);
+  const questions = useMemo(() => openQuestions(profile, pursued), [profile, pursued]);
   const results = useMemo(
     () => new Map(matchAll(profile, candidates).map((r) => [r.churchId, r])),
     [profile, candidates],
@@ -108,7 +113,7 @@ export function PlanView({
         ) : (
           questions.map(({ church, unknowns }, index) => (
             // Only the first is open. Early on, every church has the same
-            // eighteen unanswered questions, and stacking them all expanded
+            // twenty unanswered questions, and stacking them all expanded
             // turns a work list into a wall.
             <details key={church.id} className="qblock" open={index === 0}>
               <summary className="qblock__head">

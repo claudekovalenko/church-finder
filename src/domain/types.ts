@@ -140,6 +140,7 @@ export interface AxisDatum {
  * to end at `committed` for exactly one church.
  */
 export type Stage =
+  | 'long-list' // gathered from a directory; not yet looked at
   | 'shortlist'
   | 'researching'
   | 'visiting'
@@ -148,6 +149,7 @@ export type Stage =
   | 'ruled-out';
 
 export const STAGE_ORDER: Stage[] = [
+  'long-list',
   'shortlist',
   'researching',
   'visiting',

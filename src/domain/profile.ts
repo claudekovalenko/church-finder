@@ -101,6 +101,24 @@ export const REFORMED_BAPTIST_CONTINUATIONIST: AxisPreference[] = [
     },
   },
   {
+    axisId: 'race-and-identity',
+    // Clarity, not combativeness: the target is a church that says plainly
+    // that partiality by ethnicity is sin and appoints only by qualification.
+    target: 85,
+    weight: 7,
+    mode: 'atLeast',
+    tolerance: 45,
+  },
+  {
+    axisId: 'partisanship',
+    // Both directions cost you. A church entrenched in a political movement
+    // has traded its clarity for a side, whichever side it is.
+    target: 50,
+    weight: 6,
+    mode: 'proximity',
+    tolerance: 35,
+  },
+  {
     axisId: 'polity',
     target: 85,
     weight: 9,
@@ -229,6 +247,8 @@ export const DEFAULT_PROFILE: Profile = {
     'Complementarian, with accountable elders. A real missional drive that treats eternity as',
     'the thing to live and give everything for — a base to go out from and change the world.',
     'A church that plants churches, and could train and send me if that is the call.',
+    'Clear that partiality by ethnicity is sin and that leaders are chosen by qualification,',
+    'without being entrenched in a political side.',
   ].join(' '),
   calling: DEFAULT_CALLING,
   preferences: REFORMED_BAPTIST_CONTINUATIONIST,
